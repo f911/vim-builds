@@ -1,5 +1,5 @@
 :: command to build big Vim with OLE, Perl, Python, Ruby and Tcl
-SET VCDIR="C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\"
-SET TOOLDIR=E:\
-%VCDIR%nmake -f Make_mvc.mak GUI=yes OLE=yes PERL=%TOOLDIR%perl522\perl DYNAMIC_PERL=yes PERL_VER=522 PYTHON=%TOOLDIR%python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=%TOOLDIR%python34 DYNAMIC_PYTHON3=yes PYTHON3_VER=34 RUBY=%TOOLDIR%ruby192 DYNAMIC_RUBY=yes RUBY_VER=19 RUBY_VER_LONG=1.9.2 TCL=%TOOLDIR%tcl TCL_VER=86 TCL_VER_LONG=8.6 DYNAMIC_TCL=yes %1 IME=yes CSCOPE=yes
+SET VCDIR="C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64"
+
+%VCDIR%nmake -f Make_mvc.mak SDK_INCLUDE_DIR="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" FEATURES=HUGE GUI=yes OLE=yes DIRECTX=yes PERL=C:\Perl64 DYNAMIC_PERL=yes PERL_VER=522 PYTHON=C:\Python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=C:\Python34 DYNAMIC_PYTHON3=yes PYTHON3_VER=34 %1 IME=yes GIME=yes CSCOPE=yes USERNAME=nick USERDOMAIN=TSUHIKIME
 
