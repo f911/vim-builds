@@ -1,5 +1,5 @@
 " Test binding arguments to a Funcref.
-
+ 
 func MyFunc(arg1, arg2, arg3)
   return a:arg1 . '/' . a:arg2 . '/' . a:arg3
 endfunc
@@ -12,6 +12,14 @@ func MySort(up, one, two)
     return a:one > a:two ? 1 : -1
   endif
   return a:one < a:two ? 1 : -1
+endfunc
+
+func MyMap(sub, index, val)
+  return a:val - a:sub
+endfunc
+
+func MyFilter(threshold, index, val)
+  return a:val > a:threshold
 endfunc
 
 func Test_partial_args()
@@ -36,6 +44,16 @@ func Test_partial_args()
   call assert_equal([1, 2, 3], sort([3, 1, 2], Sort))
   let Sort = function('MySort', [0])
   call assert_equal([3, 2, 1], sort([3, 1, 2], Sort))
+
+  let Map = function('MyMap', [2])
+  call assert_equal([-1, 0, 1], map([1, 2, 3], Map))
+  let Map = function('MyMap', [3])
+  call assert_equal([-2, -1, 0], map([1, 2, 3], Map))
+
+  let Filter = function('MyFilter', [1])
+  call assert_equal([2, 3], filter([1, 2, 3], Filter))
+  let Filter = function('MyFilter', [2])
+  call assert_equal([3], filter([1, 2, 3], Filter))
 endfunc
 
 func MyDictFunc(arg1, arg2) dict
@@ -59,6 +77,9 @@ func Test_partial_dict()
   let Cb = function('MyDictFunc', dict)
   call assert_equal("hello/xxx/yyy", Cb("xxx", "yyy"))
   call assert_fails('Cb("fff")', 'E492:')
+
+  let Cb = function('MyDictFunc', dict)
+  call assert_equal({"foo": "hello/foo/1", "bar": "hello/bar/2"}, map({"foo": 1, "bar": 2}, Cb))
 
   let dict = {"tr": function('tr', ['hello', 'h', 'H'])}
   call assert_equal("Hello", dict.tr())
@@ -239,41 +260,25 @@ func Test_cyclic_dict_arg()
   unlet Pt
 endfunc
 
-func Ignored(job1, job2, status)
+func Ignored3(job1, job2, status)
 endfunc
 
 func Test_cycle_partial_job()
   if has('job')
     let job = job_start('echo')
-    call job_setoptions(job, {'exit_cb': function('Ignored', [job])})
+    call job_setoptions(job, {'exit_cb': function('Ignored3', [job])})
     unlet job
   endif
 endfunc
 
-func Test_job_start_fails()
-  if has('job')
-    let job = job_start('axdfxsdf')
-    for i in range(100)
-      let status = job_status(job)
-      if status == 'dead' || status == 'fail'
-	break
-      endif
-      sleep 10m
-    endfor
-    if has('unix')
-      call assert_equal('dead', job_status(job))
-    else
-      call assert_equal('fail', job_status(job))
-    endif
-    unlet job
-  endif
+func Ignored2(job, status)
 endfunc
 
 func Test_ref_job_partial_dict()
   if has('job')
     let g:ref_job = job_start('echo')
     let d = {'a': 'b'}
-    call job_setoptions(g:ref_job, {'exit_cb': function('string', [], d)})
+    call job_setoptions(g:ref_job, {'exit_cb': function('Ignored2', [], d)})
   endif
 endfunc
 
@@ -315,4 +320,67 @@ func Test_get_partial_items()
   call assert_equal('MyDictFunc', get(Func, 'name'))
   call assert_equal([], get(Func, 'args'))
   call assert_true(empty( get(Func, 'dict')))
+endfunc
+
+func Test_compare_partials()
+  let d1 = {}
+  let d2 = {}
+
+  function d1.f1() dict
+  endfunction
+
+  function d1.f2() dict
+  endfunction
+
+  let F1 = get(d1, 'f1')
+  let F2 = get(d1, 'f2')
+
+  let F1d1 = function(F1, d1)
+  let F2d1 = function(F2, d2)
+  let F1d1a1 = function(F1d1, [1])
+  let F1d1a12 = function(F1d1, [1, 2])
+  let F1a1 = function(F1, [1])
+  let F1a2 = function(F1, [2])
+  let F1d2 = function(F1, d2)
+  let d3 = {'f1': F1, 'f2': F2}
+  let F1d3 = function(F1, d3)
+  let F1ad1 = function(F1, [d1])
+  let F1ad3 = function(F1, [d3])
+
+  call assert_match('^function(''\d\+'')$', string(F1))  " Not a partial
+  call assert_match('^function(''\d\+'')$', string(F2))  " Not a partial
+  call assert_match('^function(''\d\+'', {.*})$', string(F1d1))  " A partial
+  call assert_match('^function(''\d\+'', {.*})$', string(F2d1))  " A partial
+  call assert_match('^function(''\d\+'', \[.*\])$', string(F1a1))  " No dict
+
+  " !=
+  let X = F1
+  call assert_false(F1 != X)  " same function
+  let X = F1d1
+  call assert_false(F1d1 != X)  " same partial
+  let X = F1d1a1
+  call assert_false(F1d1a1 != X)  " same partial
+  let X = F1a1
+  call assert_false(F1a1 != X)  " same partial
+
+  call assert_true(F1 != F2)  " Different functions
+  call assert_true(F1 != F1d1)  " Partial /= non-partial
+  call assert_true(F1d1a1 != F1d1a12)  " Different number of arguments
+  call assert_true(F1a1 != F1d1a12)  " One has no dict
+  call assert_true(F1a1 != F1a2)  " Different arguments
+  call assert_true(F1d2 != F1d1)  " Different dictionaries
+  call assert_false(F1d1 != F1d3)  " Equal dictionaries, even though d1 isnot d3
+
+  " isnot, option 1
+  call assert_true(F1 isnot# F2)  " Different functions
+  call assert_true(F1 isnot# F1d1)  " Partial /= non-partial
+  call assert_true(F1d1 isnot# F1d3)  " d1 isnot d3, even though d1 == d3
+  call assert_true(F1a1 isnot# F1d1a12)  " One has no dict
+  call assert_true(F1a1 isnot# F1a2)  " Different number of arguments
+  call assert_true(F1ad1 isnot# F1ad3)  " In arguments d1 isnot d3
+
+  " isnot, option 2
+  call assert_true(F1 isnot# F2)  " Different functions
+  call assert_true(F1 isnot# F1d1)  " Partial /= non-partial
+  call assert_true(d1.f1 isnot# d1.f1)  " handle_subscript creates new partial each time
 endfunc

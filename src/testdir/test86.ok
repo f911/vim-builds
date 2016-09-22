@@ -484,7 +484,7 @@ psa9: <vim.Function 'SelfArgs', self={'abcSelfPSA9': 'abcSelfPSA9Val'}, auto_reb
 psaA: <vim.Function 'SelfArgs', args=['abcArgsPSAA'], self={'abcSelfPSAA': 'abcSelfPSAAVal'}, auto_rebind=True>
 psaB: <vim.Function 'SelfArgs', args=['abcArgsPSAB']>
 psaC: <vim.Function 'SelfArgs'>
-psar: <vim.Function 'SelfArgs', args=[{'abcArgsPSAr2': [{'rec': function('SelfArgs', [{...}], {...}), 'self': {...}, 'abcSelfPSAr': 'abcSelfPSArVal', 'args': [{...}]}, {...}], 'abcArgsPSAr': 'abcArgsPSArVal'}], self={'rec': function('SelfArgs', [{'abcArgsPSAr2': [{...}, {...}], 'abcArgsPSAr': 'abcArgsPSArVal'}], {...}), 'self': {...}, 'abcSelfPSAr': 'abcSelfPSArVal', 'args': [{...}]}>
+psar: <vim.Function 'SelfArgs', args=[{'abcArgsPSAr2': [{'rec': function('SelfArgs', [{...}], {...}), 'self': {...}, 'abcSelfPSAr': 'abcSelfPSArVal', 'args': [{...}]}, {...}], 'abcArgsPSAr': 'abcArgsPSArVal'}], self={'rec': function('SelfArgs', [{'abcArgsPSAr2': [{...}, {...}], 'abcArgsPSAr': 'abcArgsPSArVal'}], {...}), 'self': {...}, 'abcSelfPSAr': 'abcSelfPSArVal', 'args': [{'abcArgsPSAr2': [{...}, {...}], 'abcArgsPSAr': 'abcArgsPSArVal'}]}>
 s(a): function('Args')
 s(pa1): function('Args', ['abcArgsPA1'])
 s(pa2): function('Args')
@@ -628,7 +628,7 @@ testdir
 test86.in
 > Output
 >> OutputSetattr
-del sys.stdout.softspace:AttributeError:("can't delete OutputObject attributes",)
+del sys.stdout.softspace:AttributeError:('cannot delete OutputObject attributes',)
 >>> Testing NumberToLong using sys.stdout.softspace = %s
 sys.stdout.softspace = []:TypeError:('expected int(), long() or something supporting coercing to long(), but got list',)
 sys.stdout.softspace = None:TypeError:('expected int(), long() or something supporting coercing to long(), but got NoneType',)

@@ -1,4 +1,4 @@
-/* vi:set ts=8 sts=4 sw=4:
+/* vi:set ts=8 sts=4 sw=4 noet:
  *
  * VIM - Vi IMproved		by Bram Moolenaar
  *				GUI support by Robert Webb
@@ -247,6 +247,7 @@ gui_mch_set_rendering_options(char_u *s)
 # define CONST
 # define FAR
 # define NEAR
+# undef _cdecl
 # define _cdecl
 typedef int BOOL;
 typedef int BYTE;
@@ -288,6 +289,7 @@ typedef void VOID;
 typedef int LPNMHDR;
 typedef int LONG;
 typedef int WNDPROC;
+typedef int UINT_PTR;
 #endif
 
 #ifndef GET_X_LPARAM
@@ -540,6 +542,18 @@ static long_u		blink_ontime = 400;
 static long_u		blink_offtime = 250;
 static UINT		blink_timer = 0;
 
+    int
+gui_mch_is_blinking(void)
+{
+    return blink_state != BLINK_NONE;
+}
+
+    int
+gui_mch_is_blink_off(void)
+{
+    return blink_state == BLINK_OFF;
+}
+
     void
 gui_mch_set_blinking(long wait, long on, long off)
 {
@@ -679,7 +693,7 @@ char_to_string(int ch, char_u *string, int slen, int had_alt)
     int		i;
 #ifdef FEAT_MBYTE
     WCHAR	wstring[2];
-    char_u	*ws = NULL;;
+    char_u	*ws = NULL;
 
     if (os_version.dwPlatformId != VER_PLATFORM_WIN32_NT)
     {
@@ -1867,7 +1881,7 @@ process_message(void)
 		    && (vk != VK_SPACE || !(GetKeyState(VK_MENU) & 0x8000)))
 	    {
 		/*
-		 * Behave as exected if we have a dead key and the special key
+		 * Behave as expected if we have a dead key and the special key
 		 * is a key that would normally trigger the dead key nominal
 		 * character output (such as a NUMPAD printable character or
 		 * the TAB key, etc...).
@@ -2022,6 +2036,22 @@ gui_mch_update(void)
 	    process_message();
 }
 
+    static void
+remove_any_timer(void)
+{
+    MSG		msg;
+
+    if (s_wait_timer != 0 && !s_timed_out)
+    {
+	KillTimer(NULL, s_wait_timer);
+
+	/* Eat spurious WM_TIMER messages */
+	while (pPeekMessage(&msg, s_hwnd, WM_TIMER, WM_TIMER, PM_REMOVE))
+	    ;
+	s_wait_timer = 0;
+    }
+}
+
 /*
  * GUI input routine called by gui_wait_for_chars().  Waits for a character
  * from the keyboard.
@@ -2034,7 +2064,6 @@ gui_mch_update(void)
     int
 gui_mch_wait_for_chars(int wtime)
 {
-    MSG		msg;
     int		focus;
 
     s_timed_out = FALSE;
@@ -2073,6 +2102,9 @@ gui_mch_wait_for_chars(int wtime)
 	    s_need_activate = FALSE;
 	}
 
+#ifdef FEAT_TIMERS
+	did_add_timer = FALSE;
+#endif
 #ifdef MESSAGE_QUEUE
 	/* Check channel while waiting message. */
 	for (;;)
@@ -2098,15 +2130,7 @@ gui_mch_wait_for_chars(int wtime)
 
 	if (input_available())
 	{
-	    if (s_wait_timer != 0 && !s_timed_out)
-	    {
-		KillTimer(NULL, s_wait_timer);
-
-		/* Eat spurious WM_TIMER messages */
-		while (pPeekMessage(&msg, s_hwnd, WM_TIMER, WM_TIMER, PM_REMOVE))
-		    ;
-		s_wait_timer = 0;
-	    }
+	    remove_any_timer();
 	    allow_scrollbar = FALSE;
 
 	    /* Clear pending mouse button, the release event may have been
@@ -2117,6 +2141,15 @@ gui_mch_wait_for_chars(int wtime)
 
 	    return OK;
 	}
+
+#ifdef FEAT_TIMERS
+	if (did_add_timer)
+	{
+	    /* Need to recompute the waiting time. */
+	    remove_any_timer();
+	    break;
+	}
+#endif
     }
     allow_scrollbar = FALSE;
     return FAIL;
@@ -2230,11 +2263,11 @@ SaveInst(HINSTANCE hInst)
 /*
  * Return the RGB value of a pixel as a long.
  */
-    long_u
+    guicolor_T
 gui_mch_get_rgb(guicolor_T pixel)
 {
-    return (GetRValue(pixel) << 16) + (GetGValue(pixel) << 8)
-							   + GetBValue(pixel);
+    return (guicolor_T)((GetRValue(pixel) << 16) + (GetGValue(pixel) << 8)
+							   + GetBValue(pixel));
 }
 
 #if defined(FEAT_GUI_DIALOG) || defined(PROTO)
@@ -3420,7 +3453,7 @@ gui_mch_settitle(
     set_window_title(s_hwnd, (title == NULL ? "VIM" : (char *)title));
 }
 
-#ifdef FEAT_MOUSESHAPE
+#if defined(FEAT_MOUSESHAPE) || defined(PROTO)
 /* Table for shape IDCs.  Keep in sync with the mshape_names[] table in
  * misc2.c! */
 static LPCSTR mshape_idcs[] =
@@ -3483,7 +3516,7 @@ mch_set_mouse_shape(int shape)
 }
 #endif
 
-#ifdef FEAT_BROWSE
+#if defined(FEAT_BROWSE) || defined(PROTO)
 /*
  * The file browser exists in two versions: with "W" uses wide characters,
  * without "W" the current codepage.  When FEAT_MBYTE is defined and on
@@ -4498,15 +4531,6 @@ is_winnt_3(void)
     return ((os_version.dwPlatformId == VER_PLATFORM_WIN32_NT
 		&& os_version.dwMajorVersion == 3)
 	    || (os_version.dwPlatformId == VER_PLATFORM_WIN32s));
-}
-
-/*
- * Return TRUE when running under Win32s.
- */
-    int
-gui_is_win32s(void)
-{
-    return (os_version.dwPlatformId == VER_PLATFORM_WIN32s);
 }
 
 #ifdef FEAT_MENU
@@ -7001,10 +7025,8 @@ gui_mch_menu_grey(
     }
     else
 #endif
-    if (grey)
-	EnableMenuItem(s_menuBar, menu->id, MF_BYCOMMAND | MF_GRAYED);
-    else
-	EnableMenuItem(s_menuBar, menu->id, MF_BYCOMMAND | MF_ENABLED);
+    (void)EnableMenuItem(menu->parent ? menu->parent->submenu_id : s_menuBar,
+		    menu->id, MF_BYCOMMAND | (grey ? MF_GRAYED : MF_ENABLED));
 
 #ifdef FEAT_TEAROFF
     if ((menu->parent != NULL) && (IsWindow(menu->parent->tearoff_handle)))

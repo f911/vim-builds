@@ -1,7 +1,7 @@
 " Vim support file to detect file types
 "
 " Maintainer:	Bram Moolenaar <Bram@vim.org>
-" Last Change:	2016 Apr 29
+" Last Change:	2016 Sep 15
 
 " Listen very carefully, I will say this only once
 if exists("did_load_filetypes")
@@ -534,7 +534,7 @@ au BufNewFile,BufRead configure.in,configure.ac setf config
 au BufNewFile,BufRead *.cu			setf cuda
 
 " Dockerfile
-au BufNewFile,BufRead Dockerfile		setf dockerfile
+au BufNewFile,BufRead Dockerfile,*.Dockerfile	setf dockerfile
 
 " WildPackets EtherPeek Decoder
 au BufNewFile,BufRead *.dcd			setf dcd
@@ -676,6 +676,9 @@ au BufNewFile,BufRead *.dts,*.dtsi		setf dts
 " EDIF (*.edf,*.edif,*.edn,*.edo)
 au BufNewFile,BufRead *.ed\(f\|if\|n\|o\)	setf edif
 
+" EditorConfig (close enough to dosini)
+au BufNewFile,BufRead .editorconfig		setf dosini
+
 " Embedix Component Description
 au BufNewFile,BufRead *.ecd			setf ecd
 
@@ -692,8 +695,8 @@ func! s:FTe()
     let n = 1
     while n < 100 && n < line("$")
       if getline(n) =~ "^\\s*\\(<'\\|'>\\)\\s*$"
-        setf specman
-        return
+	setf specman
+	return
       endif
       let n = n + 1
     endwhile
@@ -779,8 +782,7 @@ au BufNewFile,BufRead *.mo,*.gdmo		setf gdmo
 au BufNewFile,BufRead *.ged,lltxxxxx.txt	setf gedcom
 
 " Git
-au BufNewFile,BufRead COMMIT_EDITMSG		setf gitcommit
-au BufNewFile,BufRead MERGE_MSG			setf gitcommit
+au BufNewFile,BufRead COMMIT_EDITMSG,MERGE_MSG,TAG_EDITMSG setf gitcommit
 au BufNewFile,BufRead *.git/config,.gitconfig,.gitmodules setf gitconfig
 au BufNewFile,BufRead *.git/modules/*/config	setf gitconfig
 au BufNewFile,BufRead */.config/git/config	setf gitconfig
@@ -1019,7 +1021,7 @@ au BufNewFile,BufRead *.jgr			setf jgraph
 au BufNewFile,BufRead *.jov,*.j73,*.jovial	setf jovial
 
 " JSON
-au BufNewFile,BufRead *.json,*.jsonp		setf json
+au BufNewFile,BufRead *.json,*.jsonp,*.webmanifest	setf json
 
 " Kixtart
 au BufNewFile,BufRead *.kix			setf kix
@@ -1621,11 +1623,9 @@ au BufNewFile,BufRead */etc/protocols		setf protocols
 " Pyrex
 au BufNewFile,BufRead *.pyx,*.pxd		setf pyrex
 
-" Python
-au BufNewFile,BufRead *.py,*.pyw		setf python
-
+" Python, Python Shell Startup Files
 " Quixote (Python-based web framework)
-au BufNewFile,BufRead *.ptl			setf python
+au BufNewFile,BufRead *.py,*.pyw,.pythonstartup,.pythonrc,*.ptl  setf python
 
 " Radiance
 au BufNewFile,BufRead *.rad,*.mat		setf radiance
@@ -1782,6 +1782,9 @@ au BufNewFile,BufRead *.sass			setf sass
 
 " Sather
 au BufNewFile,BufRead *.sa			setf sather
+
+" Scala
+au BufNewFile,BufRead *.scala			setf scala
 
 " Scilab
 au BufNewFile,BufRead *.sci,*.sce		setf scilab
@@ -2055,7 +2058,7 @@ func! s:FTRules()
     if line =~ s:ft_rules_udev_rules_pattern
       let udev_rules = substitute(line, s:ft_rules_udev_rules_pattern, '\1', "")
       if dir == udev_rules
-        setf udevrules
+	setf udevrules
       endif
       break
     endif
@@ -2304,7 +2307,7 @@ au BufNewFile,BufRead */etc/updatedb.conf	setf updatedb
 au BufNewFile,BufRead */usr/share/upstart/*.conf	       setf upstart
 au BufNewFile,BufRead */usr/share/upstart/*.override	       setf upstart
 au BufNewFile,BufRead */etc/init/*.conf,*/etc/init/*.override  setf upstart
-au BufNewFile,BufRead */.init/*.conf,*/.init/*.override        setf upstart
+au BufNewFile,BufRead */.init/*.conf,*/.init/*.override	       setf upstart
 au BufNewFile,BufRead */.config/upstart/*.conf		       setf upstart
 au BufNewFile,BufRead */.config/upstart/*.override	       setf upstart
 
@@ -2644,6 +2647,8 @@ au BufNewFile,BufRead [rR]akefile*		call s:StarSetf('ruby')
 
 " Mail (also matches muttrc.vim, so this is below the other checks)
 au BufNewFile,BufRead mutt[[:alnum:]._-]\\\{6\}	setf mail
+
+au BufNewFile,BufRead reportbug-*		call s:StarSetf('mail')
 
 " Modconf
 au BufNewFile,BufRead */etc/modutils/*

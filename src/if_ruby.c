@@ -1,4 +1,4 @@
-/* vi:set ts=8 sts=4 sw=4:
+/* vi:set ts=8 sts=4 sw=4 noet:
  *
  * VIM - Vi IMproved	by Bram Moolenaar
  *
@@ -31,6 +31,10 @@
 # define RUBYEXTERN extern
 #endif
 
+#if defined(DYNAMIC_RUBY_VER) && DYNAMIC_RUBY_VER >= 24
+# define USE_RUBY_INTEGER
+#endif
+
 #ifdef DYNAMIC_RUBY
 /*
  * This is tricky.  In ruby.h there is (inline) function rb_class_of()
@@ -39,6 +43,9 @@
  */
 # define rb_cFalseClass		(*dll_rb_cFalseClass)
 # define rb_cFixnum		(*dll_rb_cFixnum)
+# if defined(USE_RUBY_INTEGER)
+#  define rb_cInteger		(*dll_rb_cInteger)
+# endif
 # if defined(DYNAMIC_RUBY_VER) && DYNAMIC_RUBY_VER >= 20
 #  define rb_cFloat		(*dll_rb_cFloat)
 # endif
@@ -318,6 +325,9 @@ static void ruby_vim_init(void);
 static VALUE (*dll_rb_assoc_new) (VALUE, VALUE);
 VALUE *dll_rb_cFalseClass;
 VALUE *dll_rb_cFixnum;
+# if defined(USE_RUBY_INTEGER)
+VALUE *dll_rb_cInteger;
+# endif
 # if defined(DYNAMIC_RUBY_VER) && DYNAMIC_RUBY_VER >= 20
 VALUE *dll_rb_cFloat;
 # endif
@@ -505,6 +515,9 @@ static struct
     {"rb_assoc_new", (RUBY_PROC*)&dll_rb_assoc_new},
     {"rb_cFalseClass", (RUBY_PROC*)&dll_rb_cFalseClass},
     {"rb_cFixnum", (RUBY_PROC*)&dll_rb_cFixnum},
+# if defined(USE_RUBY_INTEGER)
+    {"rb_cInteger", (RUBY_PROC*)&dll_rb_cInteger},
+# endif
 # if defined(DYNAMIC_RUBY_VER) && DYNAMIC_RUBY_VER >= 20
     {"rb_cFloat", (RUBY_PROC*)&dll_rb_cFloat},
 # endif
@@ -733,7 +746,7 @@ vim_str2rb_enc_str(const char *s)
 	vim_free(sval);
 	if (enc)
 	{
-	    return rb_enc_str_new(s, strlen(s), enc);
+	    return rb_enc_str_new(s, (long)strlen(s), enc);
 	}
     }
 #endif
@@ -1138,7 +1151,7 @@ static VALUE buffer_s_count(void)
     buf_T *b;
     int n = 0;
 
-    for (b = firstbuf; b != NULL; b = b->b_next)
+    FOR_ALL_BUFFERS(b)
     {
 	/*  Deleted buffers should not be counted
 	 *    SegPhault - 01/07/05 */
@@ -1154,7 +1167,7 @@ static VALUE buffer_s_aref(VALUE self UNUSED, VALUE num)
     buf_T *b;
     int n = NUM2INT(num);
 
-    for (b = firstbuf; b != NULL; b = b->b_next)
+    FOR_ALL_BUFFERS(b)
     {
 	/*  Deleted buffers should not be counted
 	 *    SegPhault - 01/07/05 */
@@ -1405,7 +1418,7 @@ static VALUE window_s_count(void)
     win_T	*w;
     int n = 0;
 
-    for (w = firstwin; w != NULL; w = w->w_next)
+    FOR_ALL_WINDOWS(w)
 	n++;
     return INT2NUM(n);
 #else

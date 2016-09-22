@@ -25,6 +25,16 @@ func Test_help_tagjump()
   call assert_equal("help", &filetype)
   call assert_true(getline('.') =~ '\*arglistid()\*')
   helpclose
+
+  exec "help! 'autoindent'."
+  call assert_equal("help", &filetype)
+  call assert_true(getline('.') =~ "\\*'autoindent'\\*")
+  helpclose
+
+  exec "help! {address}."
+  call assert_equal("help", &filetype)
+  call assert_true(getline('.') =~ '\*{address}\*')
+  helpclose
 endfunc
 
 let s:langs = ['en', 'ab', 'ja']
@@ -140,4 +150,4 @@ func Test_help_complete()
   endtry
 endfunc
 
-" vim: et sw=2:
+" vim: shiftwidth=2 sts=2 expandtab
