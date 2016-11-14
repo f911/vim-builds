@@ -243,9 +243,9 @@ static void	ex_popup(exarg_T *eap);
 # define ex_helpfind		ex_ni
 #endif
 #ifndef FEAT_CSCOPE
-# define do_cscope		ex_ni
-# define do_scscope		ex_ni
-# define do_cstag		ex_ni
+# define ex_cscope		ex_ni
+# define ex_scscope		ex_ni
+# define ex_cstag		ex_ni
 #endif
 #ifndef FEAT_SYN_HL
 # define ex_syntax		ex_ni
@@ -1388,8 +1388,6 @@ do_cmdline(
 		    break;
 		case ET_INTERRUPT:
 		    break;
-		default:
-		    p = vim_strsave((char_u *)_(e_internal));
 	    }
 
 	    saved_sourcing_name = sourcing_name;
@@ -7488,9 +7486,9 @@ tabpage_close(int forceit)
 {
     /* First close all the windows but the current one.  If that worked then
      * close the last window in this tab, that will close it. */
-    if (lastwin != firstwin)
+    if (!ONE_WINDOW)
 	close_others(TRUE, forceit);
-    if (lastwin == firstwin)
+    if (ONE_WINDOW)
 	ex_win_close(forceit, curwin, NULL);
 # ifdef FEAT_GUI
     need_mouse_correct = TRUE;
@@ -10429,7 +10427,7 @@ ex_tag_cmd(exarg_T *eap, char_u *name)
 #ifdef FEAT_CSCOPE
 		  if (p_cst && *eap->arg != NUL)
 		  {
-		      do_cstag(eap);
+		      ex_cstag(eap);
 		      return;
 		  }
 #endif
