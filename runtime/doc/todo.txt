@@ -1,4 +1,4 @@
-*todo.txt*      For Vim version 8.0.  Last change: 2016 Nov 06
+*todo.txt*      For Vim version 8.0.  Last change: 2016 Dec 01
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -28,8 +28,9 @@ See |develop.txt| for development plans.  You can vote for which items should
 be worked on, but only if you sponsor Vim development.  See |sponsor|.
 
 Issues can also be entered online: https://github.com/vim/vim/issues
-Updates will be forwarded to the vim_dev maillist.  Issues entered there will
-not be repeated below, unless there is extra information.
+Only use this for bug reports, not for questions!  Those belong on the
+maillist.  Updates will be forwarded to the vim_dev maillist.  Issues entered
+there will not be repeated below, unless there is extra information.
 
 							*known-bugs*
 -------------------- Known bugs and current work -----------------------
@@ -96,14 +97,29 @@ Regexp problems:
 - The pattern "\1" with the old engine gives E65, with the new engine it
   matches the empty string. (Dominique Pelle, 2015 Oct 2, Nov 24)
   had_endbrace[] is set but not initialized or used.
+- Difference between two engines: ".*\zs\/\@>\/" on text "///"
+  (Chris Paul, 2016 Nov 13)  New engine not greedy enough?
 
-Patch to support nested namespace syntax. (Pauli, 2016 Oct 30, #1214)
+'] mark invalid after undoing insert "hello".
 
 Make html indent file use javascript indent, now that it's not just cindent.
 #1220
 
+Use __sun instead of sun define check.  #1296
+
+Patch to use buffer id for system() and systemlist() (LemonBoy, 2016 Nov 7,
+#1240)
+
+When using symbolic links, a package path will not be inserted at the right
+position in 'runtimepath'. (Dugan Chen, 2016 Nov 18)
+
 json_encode(): should convert to utf-8. (Nikolai Pavlov, 2016 Jan 23)
 What if there is an invalid character?
+
+Bug: ":earlier 100d" doesn't work after using undo file.
+(Pavol Juhas, 2016 Nov 15, #1254)
+Fix by Christian, but lacks a test.
+Test by Pavol Juhas, Nov 22.
 
 Bug: Json with same key should not give internal error. (Lcd, 2016 Oct 26)
 Make dict_add give a duplicate key error.
@@ -132,6 +148,9 @@ Error in test_startup_utf8 on Solaris. (Danek Duvall, 2016 Aug 17)
 Screen updated delayed when using CTRL-O u in Insert mode.
 (Barlik, #1191)  Perhaps because status message?
 
+Patch to fix that empty first tab is not in session.
+(Hirohito Higashi, 2016 Nov 25, #1282)
+
 Patch for restoring wide characters in the console buffer.
 (Ken Takata, 2016 Jun 7)
 
@@ -145,6 +164,9 @@ Or point to nightly builds: https://github.com/vim/vim-win32-installer/releases
 Problem passing non-UTF-8 strings to Python 3. (Björn Linse, 2016 Sep 11,
 #1053)  With patch, does it work?
 
+Patch to make finding duplicate tags much faster, using a hashtab. (James
+McCoy, 2016 Sept 14, #1046)  Should work now.  Updated Nov 12.
+>
 Use ADDR_OTHER instead of ADDR_LINES for many more commands.
 Add tests for using number larger than number of lines in buffer.
 
@@ -154,6 +176,11 @@ Is there another solution?
 On MS-Windows with 'clipboard' set to "unnamed" this doesn't work to double
 lines: :g/^/normal yyp   On Unix it works OK.  (Bryce Orgill, 2016 Nov 5)
 
+Patch for wrong cursor position on wrapped line, involving breakindent.
+(Ozaki Kiichi, 2016 Nov 25)
+
+Patch for 'cursorlinenr' option. (Ozaki Kiichi, 2016 Nov 30)
+
 Invalid behavior with NULL list. (Nikolai Pavlov, #768)
 E.g. deepcopy(test_null_list())
 
@@ -161,6 +188,13 @@ Patch to make it possible to extend a list with itself.
 (Nikolai Pavlov, 2016 Sep 23)
 
 Patch to add Zstandard compressed file support. (Nick Terrell, 2016 Oct 24)
+
+Patch to add trim() function. (Bukn, 2016 Nov 25, #1280)
+
+Patch to add MODIFIED_BY to MSVC build file. (Chen Lei, 2016 Nov 24, #1275)
+
+On Windows buffer completion sees backslash as escape char instead of path
+separator. (Toffanim, 2016 Nov 24, #1274)
 
 min() and max() spawn lots of error messages if sorted list/dictionary
 contains invalid data (Nikolay Pavlov, 2016 Sep 4, #1039)
@@ -186,6 +220,9 @@ Include the test.
 
 When 'keywordprg' starts with ":" the argument is still escaped as a shell
 command argument. (Romain Lafourcade, 2016 Oct 16, #1175)
+
+Patch to support CamelCase for spell checking: See a lower-to-upper case
+change as a word boundary. (btucker-MPCData, 2016 Nov 6, #1235)
 
 Idea from Sven: record sequence of keys.  Useful to show others what they are
 doing (look over the shoulder), and also to see what happened.
@@ -236,6 +273,9 @@ Lakshmanan, 2016 Aug 25)
 MS-Windows: use WS_HIDE instead of SW_SHOWMINNOACTIVE in os_win32.c?
 Otherwise task flickers in taskbar.
 
+Bogus characters inserted when triggering indent while changing test.
+(Vitor Antunes, 2016 Nov 22, #1269)
+
 Should make ":@r" handle line continuation. (Cesar Romani, 2016 Jun 26)
 Also for ":@.".
 
@@ -243,6 +283,9 @@ Repeating 'opfunc' in a function only works once. (Tarmean, 2016 Jul 15, #925)
 
 Have a way to get the call stack, in a function and from an exception.
 #1125
+
+Patch to add 'pythonhome' and 'pythonthreehome' options. (Kazuki Sakamoto,
+2016 Nov 21, #1266)
 
 Second problem in #966: ins_compl_add_tv() uses get_dict_string() multiple
 times, overwrites the one buffer. (Nikolay Pavlov, 2016 Aug 5)
@@ -296,9 +339,6 @@ Add redrawtabline command. (Naruhiko Nishino, 2016 Jun 11)
 Neovim patch for utfc_ptr2char_len() https://github.com/neovim/neovim/pull/4574
 No test, needs some work to include.
 
-Patch to make finding duplicate tags much faster, using a hashtab. (James
-McCoy, 2016 Sept 14, #1046)  Should work now.
->
 Patch to improve indenting for C++ constructor with initializer list.
 (Hirohito Higashi, 2016 Mar 31)
 
@@ -1273,6 +1313,7 @@ With "tw=55 fo+=a" typing space before ) doesn't work well. (Scott Mcdermott,
 
 Patch to add random number generator. (Hong Xu, 2010 Nov 8, update Nov 10)
 Alternative from Christian Brabandt. (2010 Sep 19)
+New one from Yasuhiro Matsumoto, #1277.
 
 Messages in message.txt are highlighted as examples.
 
@@ -3830,7 +3871,7 @@ Code size:
     left out.
 8   When compiled with a GUI-only version, the termcap entries for terminals
     can be removed.
-8   Can the check for libelf in configure.in be removed?
+8   Can the check for libelf in configure.ac be removed?
 
 
 Messages:
@@ -5552,7 +5593,7 @@ From vile:
 Far future and "big" extensions:
 -   Instead of using a Makefile and autoconf, use a simple shell script to
     find the C compiler and do everything with C code.  Translate something
-    like an Aap recipe and configure.in to C.  Avoids depending on Python,
+    like an Aap recipe and configure.ac to C.  Avoids depending on Python,
     thus will work everywhere.  With batch file to find the C compiler it
     would also work on MS-Windows.
 -   Make it easy to setup Vim for groups of users: novice vi users, novice
