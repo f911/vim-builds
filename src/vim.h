@@ -8,7 +8,7 @@
 
 #ifndef VIM__H
 # define VIM__H
-#define MODIFIED_BY "nick"
+#define MODIFIED_BY "seiei"
 /* use fastcall for Borland, when compiling for Win32 */
 #if defined(__BORLANDC__) && defined(WIN32) && !defined(DEBUG)
 #if defined(FEAT_PERL) || \
