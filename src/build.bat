@@ -27,7 +27,7 @@ CD /d %SRCDIR%
 DEL /S /Q %SRCDIR%\ObjGOHAMD64\
 DEL /F /Q gvim.exe
 
-%VCDIR%\nmake -f Make_mvc.mak SDK_INCLUDE_DIR="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" FEATURES=HUGE CPU=AMD64 GUI=yes OLE=yes DIRECTX=yes PYTHON=C:\Python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=C:\Python35 DYNAMIC_PYTHON3=yes PYTHON3_VER=35 %1 IME=yes GIME=yes CSCOPE=yes USERNAME=seiei USERDOMAIN=GN00
+%VCDIR%\nmake -f Make_mvc.mak SDK_INCLUDE_DIR="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" FEATURES=HUGE CPU=AMD64 GUI=yes OLE=yes DIRECTX=yes PERL=C:\Perl64 DYNAMIC_PERL=yes PERL_VER=524 PYTHON=C:\Python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=C:\Python35 DYNAMIC_PYTHON3=yes PYTHON3_VER=35 %1 IME=yes GIME=yes CSCOPE=yes USERNAME=shiki USERDOMAIN=NERV
 
 IF EXIST gvim.exe (
 ECHO.
@@ -46,7 +46,7 @@ pause
 DEL /S /Q %SRCDIR%\ObjCOHAMD64\
 DEL /F /Q vim.exe
 
-%VCDIR%\nmake -f Make_mvc.mak SDK_INCLUDE_DIR="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" FEATURES=HUGE CPU=AMD64 GUI=no OLE=yes DIRECTX=yes PYTHON=C:\Python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=C:\Python35 DYNAMIC_PYTHON3=yes PYTHON3_VER=35 %1 IME=yes GIME=yes CSCOPE=yes USERNAME=seiei USERDOMAIN=GN00
+%VCDIR%\nmake -f Make_mvc.mak SDK_INCLUDE_DIR="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" FEATURES=HUGE CPU=AMD64 GUI=no OLE=yes DIRECTX=yes PYTHON=C:\Python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=C:\Python35 DYNAMIC_PYTHON3=yes PYTHON3_VER=35 %1 IME=yes GIME=yes CSCOPE=yes USERNAME=shiki USERDOMAIN=NERV
 
 IF EXIST vim.exe (
 ECHO.
@@ -63,7 +63,7 @@ pause
 :: ------------------------------------------------
 ::   4. install or reinstall vim8.0
 :: ------------------------------------------------
-set VIMDIR=D:\programs\vim
+set VIMDIR=E:\programs\vim
 
 :: TODO: uninstall previous vim version.
 if exist %VIMDIR%\vim80\uninstal.exe (
