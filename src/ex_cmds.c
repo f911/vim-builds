@@ -1313,7 +1313,7 @@ do_filter(
 	if (otmp != NULL)
 	{
 	    if (readfile(otmp, NULL, line2, (linenr_T)0, (linenr_T)MAXLNUM,
-						    eap, READ_FILTER) == FAIL)
+						    eap, READ_FILTER) != OK)
 	    {
 #if defined(FEAT_AUTOCMD) && defined(FEAT_EVAL)
 		if (!aborting())
@@ -3967,7 +3967,8 @@ do_ecmd(
 		     * <VN> We could instead free the synblock
 		     * and re-attach to buffer, perhaps.
 		     */
-		    if (curwin->w_s == &(curwin->w_buffer->b_s))
+		    if (curwin->w_buffer != NULL
+			    && curwin->w_s == &(curwin->w_buffer->b_s))
 			curwin->w_s = &(buf->b_s);
 #endif
 		    curwin->w_buffer = buf;
@@ -5262,6 +5263,10 @@ do_sub(exarg_T *eap)
 		    setmouse();		/* disable mouse in xterm */
 #endif
 		    curwin->w_cursor.col = regmatch.startpos[0].col;
+#ifdef FEAT_CURSORBIND
+		    if (curwin->w_p_crb)
+			do_check_cursorbind();
+#endif
 
 		    /* When 'cpoptions' contains "u" don't sync undo when
 		     * asking for confirmation. */
