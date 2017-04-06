@@ -950,7 +950,7 @@ eval_expr(char_u *arg, char_u **nextcmd)
 
 
 /*
- * Call some vimL function and return the result in "*rettv".
+ * Call some Vim script function and return the result in "*rettv".
  * Uses argv[argc] for the function arguments.  Only Number and String
  * arguments are currently supported.
  * Returns OK or FAIL.
@@ -1027,7 +1027,7 @@ call_vim_function(
 }
 
 /*
- * Call vimL function "func" and return the result as a number.
+ * Call Vim script function "func" and return the result as a number.
  * Returns -1 when calling the function fails.
  * Uses argv[argc] for the function arguments.
  */
@@ -1055,7 +1055,7 @@ call_func_retnr(
 
 # if (defined(FEAT_USR_CMDS) && defined(FEAT_CMDL_COMPL)) || defined(PROTO)
 /*
- * Call vimL function "func" and return the result as a string.
+ * Call Vim script function "func" and return the result as a string.
  * Returns NULL when calling the function fails.
  * Uses argv[argc] for the function arguments.
  */
@@ -1080,7 +1080,7 @@ call_func_retstr(
 # endif
 
 /*
- * Call vimL function "func" and return the result as a List.
+ * Call Vim script function "func" and return the result as a List.
  * Uses argv[argc] for the function arguments.
  * Returns NULL when there is something wrong.
  */
@@ -1516,7 +1516,7 @@ list_arg_vars(exarg_T *eap, char_u *arg, int *first)
 	if (error || eap->skip)
 	{
 	    arg = find_name_end(arg, NULL, NULL, FNE_INCL_BR | FNE_CHECK_START);
-	    if (!vim_iswhite(*arg) && !ends_excmd(*arg))
+	    if (!VIM_ISWHITE(*arg) && !ends_excmd(*arg))
 	    {
 		emsg_severe = TRUE;
 		EMSG(_(e_trailing));
@@ -1856,7 +1856,7 @@ get_lval(
     if (expr_start != NULL)
     {
 	/* Don't expand the name when we already know there is an error. */
-	if (unlet && !vim_iswhite(*p) && !ends_excmd(*p)
+	if (unlet && !VIM_ISWHITE(*p) && !ends_excmd(*p)
 						    && *p != '[' && *p != '.')
 	{
 	    EMSG(_(e_trailing));
@@ -1898,6 +1898,8 @@ get_lval(
      * Loop until no more [idx] or .key is following.
      */
     lp->ll_tv = &v->di_tv;
+    var1.v_type = VAR_UNKNOWN;
+    var2.v_type = VAR_UNKNOWN;
     while (*p == '[' || (*p == '.' && lp->ll_tv->v_type == VAR_DICT))
     {
 	if (!(lp->ll_tv->v_type == VAR_LIST && lp->ll_tv->vval.v_list != NULL)
@@ -1955,8 +1957,7 @@ get_lval(
 		{
 		    if (!quiet)
 			EMSG(_(e_dictrange));
-		    if (!empty1)
-			clear_tv(&var1);
+		    clear_tv(&var1);
 		    return NULL;
 		}
 		if (rettv != NULL && (rettv->v_type != VAR_LIST
@@ -1964,8 +1965,7 @@ get_lval(
 		{
 		    if (!quiet)
 			EMSG(_("E709: [:] requires a List value"));
-		    if (!empty1)
-			clear_tv(&var1);
+		    clear_tv(&var1);
 		    return NULL;
 		}
 		p = skipwhite(p + 1);
@@ -1976,15 +1976,13 @@ get_lval(
 		    lp->ll_empty2 = FALSE;
 		    if (eval1(&p, &var2, TRUE) == FAIL)	/* recursive! */
 		    {
-			if (!empty1)
-			    clear_tv(&var1);
+			clear_tv(&var1);
 			return NULL;
 		    }
 		    if (get_tv_string_chk(&var2) == NULL)
 		    {
 			/* not a number or string */
-			if (!empty1)
-			    clear_tv(&var1);
+			clear_tv(&var1);
 			clear_tv(&var2);
 			return NULL;
 		    }
@@ -1998,10 +1996,8 @@ get_lval(
 	    {
 		if (!quiet)
 		    EMSG(_(e_missbrac));
-		if (!empty1)
-		    clear_tv(&var1);
-		if (lp->ll_range && !lp->ll_empty2)
-		    clear_tv(&var2);
+		clear_tv(&var1);
+		clear_tv(&var2);
 		return NULL;
 	    }
 
@@ -2064,16 +2060,14 @@ get_lval(
 		{
 		    if (!quiet)
 			EMSG2(_(e_dictkey), key);
-		    if (len == -1)
-			clear_tv(&var1);
+		    clear_tv(&var1);
 		    return NULL;
 		}
 		if (len == -1)
 		    lp->ll_newkey = vim_strsave(key);
 		else
 		    lp->ll_newkey = vim_strnsave(key, len);
-		if (len == -1)
-		    clear_tv(&var1);
+		clear_tv(&var1);
 		if (lp->ll_newkey == NULL)
 		    p = NULL;
 		break;
@@ -2086,8 +2080,7 @@ get_lval(
 		return NULL;
 	    }
 
-	    if (len == -1)
-		clear_tv(&var1);
+	    clear_tv(&var1);
 	    lp->ll_tv = &lp->ll_di->di_tv;
 	}
 	else
@@ -2098,11 +2091,10 @@ get_lval(
 	    if (empty1)
 		lp->ll_n1 = 0;
 	    else
-	    {
+		/* is number or string */
 		lp->ll_n1 = (long)get_tv_number(&var1);
-						    /* is number or string */
-		clear_tv(&var1);
-	    }
+	    clear_tv(&var1);
+
 	    lp->ll_dict = NULL;
 	    lp->ll_list = lp->ll_tv->vval.v_list;
 	    lp->ll_li = list_find(lp->ll_list, lp->ll_n1);
@@ -2116,8 +2108,7 @@ get_lval(
 	    }
 	    if (lp->ll_li == NULL)
 	    {
-		if (lp->ll_range && !lp->ll_empty2)
-		    clear_tv(&var2);
+		clear_tv(&var2);
 		if (!quiet)
 		    EMSGN(_(e_listidx), lp->ll_n1);
 		return NULL;
@@ -2161,6 +2152,7 @@ get_lval(
 	}
     }
 
+    clear_tv(&var1);
     return p;
 }
 
@@ -2457,7 +2449,7 @@ eval_for_line(
 	return fi;
 
     expr = skipwhite(expr);
-    if (expr[0] != 'i' || expr[1] != 'n' || !vim_iswhite(expr[2]))
+    if (expr[0] != 'i' || expr[1] != 'n' || !VIM_ISWHITE(expr[2]))
     {
 	EMSG(_("E690: Missing \"in\" after :for"));
 	return fi;
@@ -2559,8 +2551,8 @@ set_context_for_expression(
 	    for (p = arg + STRLEN(arg); p >= arg; )
 	    {
 		xp->xp_pattern = p;
-		mb_ptr_back(arg, p);
-		if (vim_iswhite(*p))
+		MB_PTR_BACK(arg, p);
+		if (VIM_ISWHITE(*p))
 		    break;
 	    }
 	    return;
@@ -2706,7 +2698,7 @@ ex_unletlock(
 							     FNE_CHECK_START);
 	if (lv.ll_name == NULL)
 	    error = TRUE;	    /* error but continue parsing */
-	if (name_end == NULL || (!vim_iswhite(*name_end)
+	if (name_end == NULL || (!VIM_ISWHITE(*name_end)
 						   && !ends_excmd(*name_end)))
 	{
 	    if (name_end != NULL)
@@ -4822,7 +4814,7 @@ get_string_tv(char_u **arg, typval_T *rettv, int evaluate)
     /*
      * Find the end of the string, skipping backslashed characters.
      */
-    for (p = *arg + 1; *p != NUL && *p != '"'; mb_ptr_adv(p))
+    for (p = *arg + 1; *p != NUL && *p != '"'; MB_PTR_ADV(p))
     {
 	if (*p == '\\' && p[1] != NUL)
 	{
@@ -4960,7 +4952,7 @@ get_lit_string_tv(char_u **arg, typval_T *rettv, int evaluate)
     /*
      * Find the end of the string, skipping ''.
      */
-    for (p = *arg + 1; *p != NUL; mb_ptr_adv(p))
+    for (p = *arg + 1; *p != NUL; MB_PTR_ADV(p))
     {
 	if (*p == '\'')
 	{
@@ -5918,7 +5910,7 @@ string_quote(char_u *str, int function)
     if (str != NULL)
     {
 	len += (unsigned)STRLEN(str);
-	for (p = str; *p != NUL; mb_ptr_adv(p))
+	for (p = str; *p != NUL; MB_PTR_ADV(p))
 	    if (*p == '\'')
 		++len;
     }
@@ -6128,13 +6120,16 @@ var2fpos(
 	if (name[1] == '0')		/* "w0": first visible line */
 	{
 	    update_topline();
-	    pos.lnum = curwin->w_topline;
+	    /* In silent Ex mode topline is zero, but that's not a valid line
+	     * number; use one instead. */
+	    pos.lnum = curwin->w_topline > 0 ? curwin->w_topline : 1;
 	    return &pos;
 	}
 	else if (name[1] == '$')	/* "w$": last visible line */
 	{
 	    validate_botline();
-	    pos.lnum = curwin->w_botline - 1;
+	    /* In silent Ex mode botline is zero, return zero then. */
+	    pos.lnum = curwin->w_botline > 0 ? curwin->w_botline - 1 : 0;
 	    return &pos;
 	}
     }
@@ -6377,12 +6372,12 @@ find_name_end(
 			|| *p == '{'
 			|| ((flags & FNE_INCL_BR) && (*p == '[' || *p == '.'))
 			|| mb_nest != 0
-			|| br_nest != 0); mb_ptr_adv(p))
+			|| br_nest != 0); MB_PTR_ADV(p))
     {
 	if (*p == '\'')
 	{
 	    /* skip over 'string' to avoid counting [ and ] inside it. */
-	    for (p = p + 1; *p != NUL && *p != '\''; mb_ptr_adv(p))
+	    for (p = p + 1; *p != NUL && *p != '\''; MB_PTR_ADV(p))
 		;
 	    if (*p == NUL)
 		break;
@@ -6390,7 +6385,7 @@ find_name_end(
 	else if (*p == '"')
 	{
 	    /* skip over "str\"ing" to avoid counting [ and ] inside it. */
-	    for (p = p + 1; *p != NUL && *p != '"'; mb_ptr_adv(p))
+	    for (p = p + 1; *p != NUL && *p != '"'; MB_PTR_ADV(p))
 		if (*p == '\\' && p[1] != NUL)
 		    ++p;
 	    if (*p == NUL)
@@ -6648,7 +6643,7 @@ set_vim_var_dict(int idx, dict_T *val)
 	    if (HASHITEM_EMPTY(hi))
 		continue;
 	    --todo;
-	    HI2DI(hi)->di_flags = DI_FLAGS_RO | DI_FLAGS_FIX;
+	    HI2DI(hi)->di_flags |= DI_FLAGS_RO | DI_FLAGS_FIX;
 	}
     }
 }
@@ -6874,7 +6869,7 @@ handle_subscript(
 		|| (**arg == '.' && rettv->v_type == VAR_DICT)
 		|| (**arg == '(' && (!evaluate || rettv->v_type == VAR_FUNC
 					    || rettv->v_type == VAR_PARTIAL)))
-	    && !vim_iswhite(*(*arg - 1)))
+	    && !VIM_ISWHITE(*(*arg - 1)))
     {
 	if (**arg == '(')
 	{
@@ -8327,6 +8322,15 @@ ex_execute(exarg_T *eap)
 
     if (ret != FAIL && ga.ga_data != NULL)
     {
+	if (eap->cmdidx == CMD_echomsg || eap->cmdidx == CMD_echoerr)
+	{
+	    /* Mark the already saved text as finishing the line, so that what
+	     * follows is displayed on a new line when scrolling back at the
+	     * more prompt. */
+	    msg_sb_eol();
+	    msg_start();
+	}
+
 	if (eap->cmdidx == CMD_echomsg)
 	{
 	    MSG_ATTR(ga.ga_data, echo_attr);
@@ -9083,6 +9087,17 @@ assert_bool(typval_T *argvars, int isTrue)
 }
 
     void
+assert_report(typval_T *argvars)
+{
+    garray_T	ga;
+
+    prepare_assert_error(&ga);
+    ga_concat(&ga, get_tv_string(&argvars[0]));
+    assert_error(&ga);
+    ga_clear(&ga);
+}
+
+    void
 assert_exception(typval_T *argvars)
 {
     garray_T	ga;
@@ -9418,7 +9433,7 @@ shortpath_for_partial(
     /* Count up the path separators from the RHS.. so we know which part
      * of the path to return. */
     sepcount = 0;
-    for (p = *fnamep; p < *fnamep + *fnamelen; mb_ptr_adv(p))
+    for (p = *fnamep; p < *fnamep + *fnamelen; MB_PTR_ADV(p))
 	if (vim_ispathsep(*p))
 	    ++sepcount;
 
@@ -9536,7 +9551,7 @@ repeat:
 	}
 
 	/* When "/." or "/.." is used: force expansion to get rid of it. */
-	for (p = *fnamep; *p != NUL; mb_ptr_adv(p))
+	for (p = *fnamep; *p != NUL; MB_PTR_ADV(p))
 	{
 	    if (vim_ispathsep(*p)
 		    && p[1] == '.'
@@ -9666,7 +9681,7 @@ repeat:
 	*usedlen += 2;
 	s = get_past_head(*fnamep);
 	while (tail > s && after_pathsep(s, tail))
-	    mb_ptr_back(*fnamep, tail);
+	    MB_PTR_BACK(*fnamep, tail);
 	*fnamelen = (int)(tail - *fnamep);
 #ifdef VMS
 	if (*fnamelen > 0)
@@ -9685,7 +9700,7 @@ repeat:
 	else
 	{
 	    while (tail > s && !after_pathsep(s, tail))
-		mb_ptr_back(*fnamep, tail);
+		MB_PTR_BACK(*fnamep, tail);
 	}
     }
 

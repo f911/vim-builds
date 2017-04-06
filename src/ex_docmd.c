@@ -495,39 +495,80 @@ static void	ex_folddo(exarg_T *eap);
 #define DO_DECLARE_EXCMD
 #include "ex_cmds.h"
 
-/*
- * Table used to quickly search for a command, based on its first character.
+/* Beginning of automatically generated code by create_cmdidxs.pl
+ *
+ * Table giving the index of the first command in cmdnames[] to lookup
+ * based on the first letter of a command.
  */
-static cmdidx_T cmdidxs[27] =
+static const unsigned short cmdidxs1[26] =
 {
-	CMD_append,
-	CMD_buffer,
-	CMD_change,
-	CMD_delete,
-	CMD_edit,
-	CMD_file,
-	CMD_global,
-	CMD_help,
-	CMD_insert,
-	CMD_join,
-	CMD_k,
-	CMD_list,
-	CMD_move,
-	CMD_next,
-	CMD_open,
-	CMD_print,
-	CMD_quit,
-	CMD_read,
-	CMD_substitute,
-	CMD_t,
-	CMD_undo,
-	CMD_vglobal,
-	CMD_write,
-	CMD_xit,
-	CMD_yank,
-	CMD_z,
-	CMD_bang
+  /* a */ 0,
+  /* b */ 19,
+  /* c */ 42,
+  /* d */ 103,
+  /* e */ 125,
+  /* f */ 145,
+  /* g */ 161,
+  /* h */ 167,
+  /* i */ 176,
+  /* j */ 194,
+  /* k */ 196,
+  /* l */ 201,
+  /* m */ 259,
+  /* n */ 277,
+  /* o */ 297,
+  /* p */ 309,
+  /* q */ 348,
+  /* r */ 351,
+  /* s */ 370,
+  /* t */ 437,
+  /* u */ 472,
+  /* v */ 483,
+  /* w */ 501,
+  /* x */ 516,
+  /* y */ 525,
+  /* z */ 526
 };
+
+/*
+ * Table giving the index of the first command in cmdnames[] to lookup
+ * based on the first 2 letters of a command.
+ * Values in cmdidxs2[c1][c2] are relative to cmdidxs1[c1] so that they
+ * fit in a byte.
+ */
+static const unsigned char cmdidxs2[26][26] =
+{ /*         a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u   v   w   x   y   z */
+  /* a */ {  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  5,  6,  0,  0,  0,  7, 15,  0, 16,  0,  0,  0,  0,  0, },
+  /* b */ {  0,  0,  0,  4,  5,  7,  0,  0,  0,  0,  0,  8,  9, 10, 11, 12,  0, 13,  0,  0,  0,  0, 22,  0,  0,  0, },
+  /* c */ {  0, 10, 12, 14, 16, 18, 21,  0,  0,  0,  0, 29, 33, 36, 42, 51, 53, 54, 55,  0, 57,  0, 60,  0,  0,  0, },
+  /* d */ {  0,  0,  0,  0,  0,  0,  0,  0,  6, 15,  0, 16,  0,  0, 17,  0,  0, 19, 20,  0,  0,  0,  0,  0,  0,  0, },
+  /* e */ {  0,  0,  2,  0,  0,  0,  0,  0,  0,  0,  0,  7,  9, 10,  0,  0,  0,  0,  0,  0,  0,  0,  0, 16,  0,  0, },
+  /* f */ {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9,  0,  0,  0,  0,  0, 15,  0,  0,  0,  0,  0, },
+  /* g */ {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  2,  0,  0,  4,  5,  0,  0,  0,  0, },
+  /* h */ {  0,  0,  0,  0,  0,  0,  0,  0,  6,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, },
+  /* i */ {  0,  0,  0,  0,  0,  3,  0,  0,  0,  4,  0,  5,  6,  0,  0,  0,  0,  0, 13,  0, 15,  0,  0,  0,  0,  0, },
+  /* j */ {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0, },
+  /* k */ {  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, },
+  /* l */ {  0,  9, 11, 15, 16, 20, 23, 28,  0,  0,  0, 30, 33, 36, 40, 46,  0, 48, 57, 49, 50, 54, 56,  0,  0,  0, },
+  /* m */ {  0,  0,  0,  0,  7,  0,  0,  0,  0,  0, 10,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, },
+  /* n */ {  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  5,  8, 10,  0,  0,  0,  0,  0, 17,  0,  0,  0,  0,  0, },
+  /* o */ {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  2,  5,  0,  0,  0,  0,  0,  0,  9,  0, 11,  0,  0,  0, },
+  /* p */ {  0,  0,  3,  0,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  7,  9,  0,  0, 16, 17, 26,  0, 27,  0, 28,  0, },
+  /* q */ {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, },
+  /* r */ {  0,  0,  0,  0,  0,  0,  0,  0, 11,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 13, 18,  0,  0,  0,  0, },
+  /* s */ {  0,  6, 15,  0, 18, 22,  0, 24, 25,  0,  0, 28, 30, 34, 38, 40,  0, 48,  0, 49,  0, 61, 62,  0, 63,  0, },
+  /* t */ {  0,  0, 19,  0, 22, 23,  0, 24,  0, 25,  0, 26, 27, 28, 29, 30,  0, 31, 33,  0, 34,  0,  0,  0,  0,  0, },
+  /* u */ {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 10,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, },
+  /* v */ {  0,  0,  0,  0,  1,  0,  0,  0,  4,  0,  0,  0,  9, 12,  0,  0,  0,  0, 15,  0, 16,  0,  0,  0,  0,  0, },
+  /* w */ {  0,  0,  0,  0,  0,  0,  0,  3,  4,  0,  0,  0,  0,  8,  0,  9, 10,  0, 12,  0, 13, 14,  0,  0,  0,  0, },
+  /* x */ {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  5,  0,  0,  0,  0,  0,  0,  7,  0,  0,  0,  0,  0, },
+  /* y */ {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, },
+  /* z */ {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, }
+};
+
+static const int command_count = 539;
+
+/* End of automatically generated code by create_cmdidxs.pl */
 
 static char_u dollar_command[2] = {'$', 0};
 
@@ -614,7 +655,6 @@ restore_dbg_stuff(struct dbg_stuff *dsp)
 }
 #endif
 
-
 /*
  * do_exmode(): Repeatedly get commands for the "Ex" mode, until the ":vi"
  * command is given.
@@ -660,7 +700,7 @@ do_exmode(
 	need_wait_return = FALSE;
 	ex_pressedreturn = FALSE;
 	ex_no_reprint = FALSE;
-	changedtick = *curbuf->b_changedtick;
+	changedtick = CHANGEDTICK(curbuf);
 	prev_msg_row = msg_row;
 	prev_line = curwin->w_cursor.lnum;
 	if (improved)
@@ -673,7 +713,7 @@ do_exmode(
 	lines_left = Rows - 1;
 
 	if ((prev_line != curwin->w_cursor.lnum
-		   || changedtick != *curbuf->b_changedtick) && !ex_no_reprint)
+		   || changedtick != CHANGEDTICK(curbuf)) && !ex_no_reprint)
 	{
 	    if (curbuf->b_ml.ml_flags & ML_EMPTY)
 		EMSG(_(e_emptybuf));
@@ -2013,7 +2053,7 @@ do_one_cmd(
 			if (save_msg_silent == -1)
 			    save_msg_silent = msg_silent;
 			++msg_silent;
-			if (*ea.cmd == '!' && !vim_iswhite(ea.cmd[-1]))
+			if (*ea.cmd == '!' && !VIM_ISWHITE(ea.cmd[-1]))
 			{
 			    /* ":silent!", but not "silent !cmd" */
 			    ea.cmd = skipwhite(ea.cmd + 1);
@@ -2771,7 +2811,7 @@ do_one_cmd(
      */
     if ((ea.argt & COUNT) && VIM_ISDIGIT(*ea.arg)
 	    && (!(ea.argt & BUFNAME) || *(p = skipdigits(ea.arg)) == NUL
-							  || vim_iswhite(*p)))
+							  || VIM_ISWHITE(*p)))
     {
 	n = getdigits(&ea.arg);
 	ea.arg = skipwhite(ea.arg);
@@ -2939,7 +2979,7 @@ do_one_cmd(
 	else
 	{
 	    p = ea.arg + STRLEN(ea.arg);
-	    while (p > ea.arg && vim_iswhite(p[-1]))
+	    while (p > ea.arg && VIM_ISWHITE(p[-1]))
 		--p;
 	}
 	ea.line2 = buflist_findpat(ea.arg, p, (ea.argt & BUFUNL) != 0,
@@ -3208,10 +3248,25 @@ find_command(exarg_T *eap, int *full UNUSED)
 	    }
 	}
 
-	if (ASCII_ISLOWER(*eap->cmd))
-	    eap->cmdidx = cmdidxs[CharOrdLow(*eap->cmd)];
+	if (ASCII_ISLOWER(eap->cmd[0]))
+	{
+	    int c1 = eap->cmd[0];
+	    int c2 = eap->cmd[1];
+
+	    if (command_count != (int)CMD_SIZE)
+	    {
+		iemsg((char_u *)_("E943: Command table needs to be updated, run 'make cmdidxs'"));
+		getout(1);
+	    }
+
+	    /* Use a precomputed index for fast look-up in cmdnames[]
+	     * taking into account the first 2 letters of eap->cmd. */
+	    eap->cmdidx = cmdidxs1[CharOrdLow(c1)];
+	    if (ASCII_ISLOWER(c2))
+		eap->cmdidx += cmdidxs2[CharOrdLow(c1)][CharOrdLow(c2)];
+	}
 	else
-	    eap->cmdidx = cmdidxs[26];
+	    eap->cmdidx = CMD_bang;
 
 	for ( ; (int)eap->cmdidx < (int)CMD_SIZE;
 			       eap->cmdidx = (cmdidx_T)((int)eap->cmdidx + 1))
@@ -3696,7 +3751,7 @@ set_one_cmd_context(
 		    return NULL;    /* It's a comment */
 		}
 	    }
-	    mb_ptr_adv(p);
+	    MB_PTR_ADV(p);
 	}
     }
 
@@ -3720,7 +3775,7 @@ set_one_cmd_context(
 	{
 	    if (*p == '\\' && *(p + 1) != NUL)
 		++p; /* skip over escaped character */
-	    mb_ptr_adv(p);
+	    MB_PTR_ADV(p);
 	}
     }
 
@@ -3757,7 +3812,7 @@ set_one_cmd_context(
 	    }
 	    /* An argument can contain just about everything, except
 	     * characters that end the command and white space. */
-	    else if (c == '|' || c == '\n' || c == '"' || (vim_iswhite(c)
+	    else if (c == '|' || c == '\n' || c == '"' || (VIM_ISWHITE(c)
 #ifdef SPACE_IN_FILENAME
 					 && (!(ea.argt & NOSPC) || usefilter)
 #endif
@@ -3780,7 +3835,7 @@ set_one_cmd_context(
 		    else
 #endif
 			len = 1;
-		    mb_ptr_adv(p);
+		    MB_PTR_ADV(p);
 		}
 		if (in_quote)
 		    bow = p;
@@ -3788,7 +3843,7 @@ set_one_cmd_context(
 		    xp->xp_pattern = p;
 		p -= len;
 	    }
-	    mb_ptr_adv(p);
+	    MB_PTR_ADV(p);
 	}
 
 	/*
@@ -4204,7 +4259,7 @@ set_one_cmd_context(
 			    arg = p + 1;
 			else if (*p == '\\' && *(p + 1) != NUL)
 			    ++p; /* skip over escaped character */
-			mb_ptr_adv(p);
+			MB_PTR_ADV(p);
 		    }
 		    xp->xp_pattern = arg;
 		}
@@ -5136,7 +5191,7 @@ expand_filename(
 			/* skip escaped characters */
 			if (p[1] && (*p == '\\' || *p == Ctrl_V))
 			    ++p;
-			else if (vim_iswhite(*p))
+			else if (VIM_ISWHITE(*p))
 			{
 			    *errormsgp = (char_u *)_("E172: Only one file name allowed");
 			    return FAIL;
@@ -5280,7 +5335,7 @@ separate_nextcmd(exarg_T *eap)
     p = eap->arg;
 #endif
 
-    for ( ; *p; mb_ptr_adv(p))
+    for ( ; *p; MB_PTR_ADV(p))
     {
 	if (*p == Ctrl_V)
 	{
@@ -5380,7 +5435,7 @@ skip_cmd_arg(
 	    else
 		++p;
 	}
-	mb_ptr_adv(p);
+	MB_PTR_ADV(p);
     }
     return p;
 }
@@ -6032,7 +6087,7 @@ uc_list(char_u *name, size_t name_len)
 	    msg_putchar(gap != &ucmds ? 'b' : ' ');
 	    msg_putchar(' ');
 
-	    msg_outtrans_attr(cmd->uc_name, hl_attr(HLF_D));
+	    msg_outtrans_attr(cmd->uc_name, HL_ATTR(HLF_D));
 	    len = (int)STRLEN(cmd->uc_name) + 4;
 
 	    do {
@@ -6336,7 +6391,7 @@ ex_command(exarg_T *eap)
     if (ASCII_ISALPHA(*p))
 	while (ASCII_ISALNUM(*p))
 	    ++p;
-    if (!ends_excmd(*p) && !vim_iswhite(*p))
+    if (!ends_excmd(*p) && !VIM_ISWHITE(*p))
     {
 	EMSG(_("E182: Invalid command name"));
 	return;
@@ -6464,7 +6519,7 @@ uc_split_args(char_u *arg, size_t *lenp)
 	    len += 2;
 	    p += 2;
 	}
-	else if (p[0] == '\\' && vim_iswhite(p[1]))
+	else if (p[0] == '\\' && VIM_ISWHITE(p[1]))
 	{
 	    len += 1;
 	    p += 2;
@@ -6474,7 +6529,7 @@ uc_split_args(char_u *arg, size_t *lenp)
 	    len += 2;
 	    p += 1;
 	}
-	else if (vim_iswhite(*p))
+	else if (VIM_ISWHITE(*p))
 	{
 	    p = skipwhite(p);
 	    if (*p == NUL)
@@ -6512,7 +6567,7 @@ uc_split_args(char_u *arg, size_t *lenp)
 	    *q++ = '\\';
 	    p += 2;
 	}
-	else if (p[0] == '\\' && vim_iswhite(p[1]))
+	else if (p[0] == '\\' && VIM_ISWHITE(p[1]))
 	{
 	    *q++ = p[1];
 	    p += 2;
@@ -6522,7 +6577,7 @@ uc_split_args(char_u *arg, size_t *lenp)
 	    *q++ = '\\';
 	    *q++ = *p++;
 	}
-	else if (vim_iswhite(*p))
+	else if (VIM_ISWHITE(*p))
 	{
 	    p = skipwhite(p);
 	    if (*p == NUL)
@@ -7078,7 +7133,7 @@ parse_addr_type_arg(
     {
 	char_u	*err = value;
 
-	for (i = 0; err[i] != NUL && !vim_iswhite(err[i]); i++)
+	for (i = 0; err[i] != NUL && !VIM_ISWHITE(err[i]); i++)
 	    ;
 	err[i] = NUL;
 	EMSG2(_("E180: Invalid address type value: %s"), err);
@@ -8480,7 +8535,7 @@ ex_tabs(exarg_T *eap UNUSED)
     {
 	msg_putchar('\n');
 	vim_snprintf((char *)IObuff, IOSIZE, _("Tab page %d"), tabcount++);
-	msg_outtrans_attr(IObuff, hl_attr(HLF_T));
+	msg_outtrans_attr(IObuff, HL_ATTR(HLF_T));
 	out_flush();	    /* output one line at a time */
 	ui_breakcheck();
 
@@ -9812,6 +9867,7 @@ ex_redraw(exarg_T *eap)
 
     RedrawingDisabled = 0;
     p_lz = FALSE;
+    validate_cursor();
     update_topline();
     update_screen(eap->forceit ? CLEAR : VIsual_active ? INVERTED : 0);
 #ifdef FEAT_TITLE
@@ -10305,6 +10361,7 @@ ex_normal(exarg_T *eap)
 	    {
 		curwin->w_cursor.lnum = eap->line1++;
 		curwin->w_cursor.col = 0;
+		check_cursor_moved(curwin);
 	    }
 
 	    exec_normal_cmd(
@@ -11860,7 +11917,7 @@ ses_put_fname(FILE *fd, char_u *name, unsigned *flagp)
     if (*flagp & SSOP_SLASH)
     {
 	/* change all backslashes to forward slashes */
-	for (p = sname; *p != NUL; mb_ptr_adv(p))
+	for (p = sname; *p != NUL; MB_PTR_ADV(p))
 	    if (*p == '\\')
 		*p = '/';
     }
@@ -12263,7 +12320,7 @@ ex_match(exarg_T *eap)
     if (ends_excmd(*eap->arg))
 	end = eap->arg;
     else if ((STRNICMP(eap->arg, "none", 4) == 0
-		&& (vim_iswhite(eap->arg[4]) || ends_excmd(eap->arg[4]))))
+		&& (VIM_ISWHITE(eap->arg[4]) || ends_excmd(eap->arg[4]))))
 	end = eap->arg + 4;
     else
     {
