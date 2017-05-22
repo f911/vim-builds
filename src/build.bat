@@ -11,12 +11,20 @@
 ::   1. set and get environment variables
 :: -----------------------------------------------
 SET SRCDIR=%~dp0
-SET MSDIR="C:\Program Files (x86)\Microsoft Visual Studio 14.0"
-SET VCDIR="C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64"
+
+REM SET MSDIR="C:\Program Files (x86)\Microsoft Visual Studio 14.0"
+REM SET VCDIR="C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64"
+
+:: set the new vs2017 vc x64 native build path
+
+SET MSDIR="C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise"
+SET VCDIR="C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC"
+SET VCX64NATIVEBIN=%VCDIR%\Tools\MSVC\14.10.25017\bin\HostX64\x64
+SET WIN32MAKDIR="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include"
 SET XPM=xpm\x64
 
 CALL %MSDIR%\Common7\Tools\VsDevCmd.bat
-CALL %VCDIR%\vcvars64.bat
+CALL %VCDIR%\Auxiliary\Build\vcvars64.bat
 
 CD /d %SRCDIR%
 
@@ -27,7 +35,7 @@ CD /d %SRCDIR%
 DEL /S /Q %SRCDIR%\ObjGOHAMD64\
 DEL /F /Q gvim.exe
 
-%VCDIR%\nmake -f Make_mvc.mak SDK_INCLUDE_DIR="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" FEATURES=HUGE CPU=AMD64 GUI=yes OLE=yes DIRECTX=yes PERL=C:\Perl64 DYNAMIC_PERL=yes PERL_VER=524 PYTHON=C:\Python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=C:\Python36 DYNAMIC_PYTHON3=yes PYTHON3_VER=36 IME=yes GIME=yes CSCOPE=yes USERNAME=shiki USERDOMAIN=NERV
+%VCX64NATIVEBIN%\nmake -f Make_mvc.mak SDK_INCLUDE_DIR=%WIN32MAKDIR% FEATURES=HUGE CPU=AMD64 GUI=yes OLE=yes DIRECTX=yes PERL=C:\Perl64 DYNAMIC_PERL=yes PERL_VER=524 PYTHON=C:\Python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=C:\Python36 DYNAMIC_PYTHON3=yes PYTHON3_VER=36 IME=yes GIME=yes CSCOPE=yes USERNAME=shiki USERDOMAIN=NERV
 
 IF EXIST gvim.exe (
 ECHO.
@@ -46,8 +54,8 @@ pause
 DEL /S /Q %SRCDIR%\ObjCOHAMD64\
 DEL /F /Q vim.exe
 
-%VCDIR%\nmake -f Make_mvc.mak SDK_INCLUDE_DIR="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" FEATURES=HUGE CPU=AMD64 GUI=no OLE=yes DIRECTX=yes PERL=C:\Perl64 DYNAMIC_PERL=yes PERL_VER=524 PYTHON=C:\Python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=C:\Python36 DYNAMIC_PYTHON3=yes PYTHON3_VER=36 IME=yes GIME=yes CSCOPE=yes USERNAME=shiki USERDOMAIN=NERV
-
+%VCX64NATIVEBIN%\nmake -f Make_mvc.mak SDK_INCLUDE_DIR=%WIN32MAKDIR% FEATURES=HUGE CPU=AMD64 GUI=no OLE=yes DIRECTX=yes PERL=C:\Perl64 DYNAMIC_PERL=yes PERL_VER=524 PYTHON=C:\Python27 DYNAMIC_PYTHON=yes PYTHON_VER=27 PYTHON3=C:\Python36 DYNAMIC_PYTHON3=yes PYTHON3_VER=36 IME=yes GIME=yes CSCOPE=yes USERNAME=shiki USERDOMAIN=NERV
+            
 IF EXIST vim.exe (
 ECHO.
 ECHO     [+] MAKE vim.exe SUCCESS!
