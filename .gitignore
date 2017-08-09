@@ -83,3 +83,13 @@ src/memfile_test
 src/json_test
 src/message_test
 src/kword_test
+
+
+# Other Generated files
+src/dimm.h
+src/dimm.tlb
+src/dimm_i.c
+src/gvim.lib
+src/vim.lib
+src/xpm/x64/lib/libXpm_bak.lib
+src/xpm/x64/lib/libXpm_tmp.lib
