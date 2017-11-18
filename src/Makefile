@@ -366,9 +366,9 @@ CClink = $(CC)
 # If the selected GUI isn't found, the GUI is disabled automatically
 #CONF_OPT_GUI = --enable-gui=gtk2
 #CONF_OPT_GUI = --enable-gui=gtk2 --disable-gtktest
-#CONF_OPT_GUI = --enable-gui=gnome2
+CONF_OPT_GUI = --enable-gui=gnome2
 #CONF_OPT_GUI = --enable-gui=gnome2 --disable-gtktest
-#CONF_OPT_GUI = --enable-gui=gtk3
+CONF_OPT_GUI = --enable-gui=gtk3
 #CONF_OPT_GUI = --enable-gui=gtk3 --disable-gtktest
 #CONF_OPT_GUI = --enable-gui=motif
 #CONF_OPT_GUI = --enable-gui=motif --with-motif-lib="-static -lXm -shared"
@@ -396,7 +396,7 @@ CClink = $(CC)
 # Uncomment the next line to fail if one of the requested language interfaces
 # cannot be configured.  Without this Vim will be build anyway, without
 # the failing interfaces.
-#CONF_OPT_FAIL = --enable-fail-if-missing
+CONF_OPT_FAIL = --enable-fail-if-missing
 
 # LUA
 # Uncomment one of these when you want to include the Lua interface.
@@ -404,8 +404,8 @@ CClink = $(CC)
 # Use --with-luajit if you want to use LuaJIT instead of Lua.
 # Set PATH environment variable to find lua or luajit executable.
 # This requires at least "normal" features, "tiny" and "small" don't work.
-#CONF_OPT_LUA = --enable-luainterp
-#CONF_OPT_LUA = --enable-luainterp=dynamic
+CONF_OPT_LUA = --enable-luainterp
+CONF_OPT_LUA = --enable-luainterp=dynamic
 #CONF_OPT_LUA = --enable-luainterp --with-luajit
 #CONF_OPT_LUA = --enable-luainterp=dynamic --with-luajit
 # Lua installation dir (when not set uses $LUA_PREFIX or defaults to /usr)
@@ -414,7 +414,7 @@ CClink = $(CC)
 # MZSCHEME
 # Uncomment this when you want to include the MzScheme interface.
 # NOTE: does not work well together with valgrind.
-#CONF_OPT_MZSCHEME = --enable-mzschemeinterp
+CONF_OPT_MZSCHEME = --enable-mzschemeinterp
 # PLT/mrscheme/drscheme Home dir; the PLTHOME environment variable also works
 #CONF_OPT_PLTHOME  = --with-plthome=/usr/local/plt
 #CONF_OPT_PLTHOME  = --with-plthome=/usr/local/drscheme
@@ -432,7 +432,7 @@ CClink = $(CC)
 # one: "touch perl.exp".
 # This requires at least "normal" features, "tiny" and "small" don't work.
 #CONF_OPT_PERL = --enable-perlinterp
-#CONF_OPT_PERL = --enable-perlinterp=dynamic
+CONF_OPT_PERL = --enable-perlinterp=dynamic
 
 # PYTHON
 # Uncomment lines here when you want to include the Python interface.
@@ -445,30 +445,30 @@ CClink = $(CC)
 # dlopen(), dlsym(), dlclose(), i.e. pythonX.Y.so must be available
 # However, this may still cause problems, such as "import termios" failing.
 # Build two separate versions of Vim in that case.
-#CONF_OPT_PYTHON = --enable-pythoninterp
-#CONF_OPT_PYTHON = --enable-pythoninterp=dynamic
-#CONF_OPT_PYTHON3 = --enable-python3interp
-#CONF_OPT_PYTHON3 = --enable-python3interp=dynamic
+CONF_OPT_PYTHON = --enable-pythoninterp
+CONF_OPT_PYTHON = --enable-pythoninterp=dynamic
+CONF_OPT_PYTHON3 = --enable-python3interp
+CONF_OPT_PYTHON3 = --enable-python3interp=dynamic
 
 # RUBY
 # Uncomment this when you want to include the Ruby interface.
 # First one for static linking, second one for loading when used.
 # Note: you need the development package (e.g., ruby1.9.1-dev on Ubuntu).
 # This requires at least "normal" features, "tiny" and "small" don't work.
-#CONF_OPT_RUBY = --enable-rubyinterp
-#CONF_OPT_RUBY = --enable-rubyinterp=dynamic
+CONF_OPT_RUBY = --enable-rubyinterp
+CONF_OPT_RUBY = --enable-rubyinterp=dynamic
 #CONF_OPT_RUBY = --enable-rubyinterp --with-ruby-command=ruby1.9.1
 
 # TCL
 # Uncomment this when you want to include the Tcl interface.
 # First one is for static linking, second one for dynamic loading.
 #CONF_OPT_TCL = --enable-tclinterp
-#CONF_OPT_TCL = --enable-tclinterp=dynamic
+CONF_OPT_TCL = --enable-tclinterp=dynamic
 #CONF_OPT_TCL = --enable-tclinterp --with-tclsh=tclsh8.4
 
 # CSCOPE
 # Uncomment this when you want to include the Cscope interface.
-#CONF_OPT_CSCOPE = --enable-cscope
+CONF_OPT_CSCOPE = --enable-cscope
 
 # WORKSHOP - Sun Visual Workshop interface.  Only works with Motif!
 #CONF_OPT_WORKSHOP = --enable-workshop
@@ -487,7 +487,7 @@ CClink = $(CC)
 # Uncomment the first line when you want terminal emulator support for
 # not-huge builds.  Uncomment the second line when you don't want terminal
 # emulator support in the huge build.
-#CONF_OPT_TERMINAL = --enable-terminal
+CONF_OPT_TERMINAL = --enable-terminal
 #CONF_OPT_TERMINAL = --disable-terminal
 
 # MULTIBYTE - To edit multi-byte characters.
@@ -495,7 +495,7 @@ CClink = $(CC)
 # It's automatically enabled with normal features, GTK or IME support.
 # Note: Compile on a machine where setlocale() actually works, otherwise the
 # configure tests may fail.
-#CONF_OPT_MULTIBYTE = --enable-multibyte
+CONF_OPT_MULTIBYTE = --enable-multibyte
 
 # NLS - National Language Support
 # Uncomment this when you do not want to support translated messages, even
@@ -507,13 +507,13 @@ CClink = $(CC)
 # When omitted it's automatically enabled for the X-windows GUI.
 # HANGUL - Input Hangul (Korean) language using internal routines.
 # Uncomment one of these when you want to input a multibyte language.
-#CONF_OPT_INPUT = --enable-xim
+CONF_OPT_INPUT = --enable-xim
 #CONF_OPT_INPUT = --disable-xim
 #CONF_OPT_INPUT = --enable-hangulinput
 
 # FONTSET - X fontset support for output of languages with many characters.
 # Uncomment this when you want to output a multibyte language.
-#CONF_OPT_OUTPUT = --enable-fontset
+CONF_OPT_OUTPUT = --enable-fontset
 
 # ACL - Uncomment this when you do not want to include ACL support, even
 # though your system does support it.  E.g., when it's buggy.
@@ -536,10 +536,10 @@ CClink = $(CC)
 #CONF_OPT_FEAT = --with-features=small
 #CONF_OPT_FEAT = --with-features=normal
 #CONF_OPT_FEAT = --with-features=big
-#CONF_OPT_FEAT = --with-features=huge
+CONF_OPT_FEAT = --with-features=huge
 
 # COMPILED BY - For including a specific e-mail address for ":version".
-#CONF_OPT_COMPBY = "--with-compiledby=John Doe <JohnDoe@yahoo.com>"
+CONF_OPT_COMPBY = "--with-compiledby=F911 <0xf911@gmail.com>"
 
 # X WINDOWS DISABLE - For creating a plain Vim without any X11 related fancies
 # (otherwise Vim configure will try to include xterm titlebar access)
