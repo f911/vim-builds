@@ -1279,7 +1279,9 @@ testclean:
 
 # Create a default rule for transforming .c files to .obj files in $(OUTDIR)
 # Batch compilation is supported by nmake 1.62 (part of VS 5.0) and later)
-!IF "$(_NMAKE_VER)" == ""
+##!IF "$(_NMAKE_VER)" == "12.00.21005.1"
+!IF "$(_NMAKE_VER)" == "14.00.23506.0"
+MSVCVER = 14.0
 .c{$(OUTDIR)/}.obj:
 !ELSE
 .c{$(OUTDIR)/}.obj::
@@ -1288,7 +1290,8 @@ testclean:
 
 # Create a default rule for transforming .cpp files to .obj files in $(OUTDIR)
 # Batch compilation is supported by nmake 1.62 (part of VS 5.0) and later)
-!IF "$(_NMAKE_VER)" == ""
+!IF "$(_NMAKE_VER)" == "14.00.23506.0"
+MSVCVER = 14.0
 .cpp{$(OUTDIR)/}.obj:
 !ELSE
 .cpp{$(OUTDIR)/}.obj::
